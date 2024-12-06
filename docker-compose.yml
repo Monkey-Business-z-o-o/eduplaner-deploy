@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15
+    container_name: eduplanner-database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: eduplanner
+    volumes:
+      - ${DATA_VOLUME}:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    stdin_open: true  # Umożliwia wejście do kontenera
+    tty: true         # Umożliwia uruchomienie interaktywnej powłoki
+
+  backend:
+    build:
+      context: ../eduplanner-server  # Ścieżka do repozytorium backendu
+    container_name: eduplanner-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      DATABASE_URL: jdbc:postgresql://database:5432/eduplanner
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
+    stdin_open: true  # Umożliwia wejście do kontenera
+    tty: true         # Umożliwia uruchomienie interaktywnej powłoki
+
+  frontend:
+    build:
+      context: ../eduplanner-app  # Ścieżka do repozytorium frontendu
+    container_name: eduplanner-frontend
+    ports:
+      - "3000:3000"
+    stdin_open: true  # Umożliwia wejście do kontenera
+    tty: true         # Umożliwia uruchomienie interaktywnej powłoki
+
+volumes:
+  db_data:
