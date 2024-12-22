@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres:15
+    container_name: eduplanner-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_TEST:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST:-root123}
+      POSTGRES_DB: ${POSTGRES_DB_TEST:-eduplanner}
+    volumes:
+      - ${DB_DATA_VOLUME_TEST:-/srv/test/db_data}:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5433:5432" # Zmieniony port
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_TEST:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev_network
+
+  backend:
+    build:
+      context: ../eduplanner-server
+      dockerfile: Dockerfile
+    container_name: eduplanner-backend
+    working_dir: /app
+    volumes:
+      - ../eduplanner-server:/app
+      - gradle_cache:/home/gradle/.gradle
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE_TEST:-test}
+      POSTGRES_USER: ${POSTGRES_USER_TEST:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST:-root123}
+      POSTGRES_DB: ${POSTGRES_DB_TEST:-eduplanner}
+      DATABASE_URL: jdbc:postgresql://database:5432/${POSTGRES_DB_TEST:-eduplanner}
+    command: ["gradle", "bootRun"]
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    networks:
+      - dev_network
+
+  frontend:
+    build:
+      context: ../eduplanner-app
+      dockerfile: Dockerfile
+    container_name: eduplanner-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - dev_network
+
+volumes:
+  gradle_cache:
+    name: dev_gradle_cache
+
+networks:
+  dev_network:
+    driver: bridge
