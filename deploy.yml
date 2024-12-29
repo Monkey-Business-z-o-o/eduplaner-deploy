@@ -1,0 +1,46 @@
+name: Deploy to Dev Environment
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install cloudflared
+      run: |
+        curl -LO https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+        sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
+        sudo chmod +x /usr/local/bin/cloudflared
+
+    - name: Install sshpass
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y sshpass
+
+    - name: Configure SSH for Cloudflare Tunnel
+      run: |
+        echo "Host ssh.kebson.fun
+          ProxyCommand cloudflared access ssh --hostname %h
+          User edutest
+          Port 222
+        " >> ~/.ssh/config
+
+    - name: Transfer docker-compose.yml to server
+      run: |
+        sshpass -p 'Dupa12345' scp docker-compose.yml edutest@ssh.kebson.fun:/srv/EduTest/docker-compose.yml
+
+    - name: Deploy application
+      run: |
+        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
+        cd /srv/EduTest &&
+        docker-compose down &&
+        docker-compose pull &&
+        docker-compose up -d
+        "
