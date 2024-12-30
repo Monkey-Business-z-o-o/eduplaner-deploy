@@ -39,11 +39,11 @@ jobs:
       run: |
         sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
 
-    - name: Ensure application directories exist
+    - name: Clean existing directories on server
       run: |
         sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
-        mkdir -p /srv/eduplanner-deploy &&
-        mkdir -p /srv/eduplanner-server
+        rm -rf /srv/eduplanner-deploy/* &&
+        rm -rf /srv/eduplanner-server/*
         "
 
     - name: Transfer application files to server
