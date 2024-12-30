@@ -39,19 +39,22 @@ jobs:
       run: |
         sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
 
-    - name: Ensure destination directory exists
+    - name: Ensure application directories exist
       run: |
-        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "mkdir -p /srv/EduTest"
+        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
+        mkdir -p /srv/eduplanner-deploy &&
+        mkdir -p /srv/eduplanner-server
+        "
 
-    - name: Transfer docker-compose.yml to server
+    - name: Transfer application files to server
       run: |
-        sshpass -p 'Dupa12345' scp -v docker-compose.yml edutest@ssh.kebson.fun:/srv/EduTest/docker-compose.yml
+        sshpass -p 'Dupa12345' scp -r ../eduplanner-deploy edutest@ssh.kebson.fun:/srv/ &&
+        sshpass -p 'Dupa12345' scp -r ../eduplanner-server edutest@ssh.kebson.fun:/srv/
 
     - name: Deploy application
       run: |
         sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
-        cd /srv/EduTest &&
+        cd /srv/eduplanner-deploy &&
         docker-compose down &&
-        docker-compose pull &&
-        docker-compose up -d
+        docker-compose up --build -d
         "
