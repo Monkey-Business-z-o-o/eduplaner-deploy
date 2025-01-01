@@ -11,8 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout deployment repository
       uses: actions/checkout@v3
+
+    - name: Checkout server repository
+      uses: actions/checkout@v3
+      with:
+        repository: Monkey-Business-z-o-o/eduplanner-server
+        ref: dev
+        token: ${{ secrets.DDToken }}
+        path: eduplanner-server
+
+    - name: Checkout app repository
+      uses: actions/checkout@v3
+      with:
+        repository: Monkey-Business-z-o-o/eduplanner-app
+        ref: dev
+        token: ${{ secrets.DDToken }}
+        path: eduplanner-app
 
     - name: Install cloudflared
       run: |
@@ -37,24 +53,26 @@ jobs:
 
     - name: Test SSH connection
       run: |
-        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
+        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
 
-    - name: Clean existing directories on server
+    - name: Ensure destination directory exists
       run: |
-        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
-        rm -rf /srv/eduplanner-deploy/* &&
-        rm -rf /srv/eduplanner-server/*
-        "
+        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "mkdir -p /srv/EduTest"
 
-    - name: Transfer application files to server
+    - name: Cleanup previous deployment
       run: |
-        sshpass -p 'Dupa12345' scp -r ../eduplanner-deploy edutest@ssh.kebson.fun:/srv/ &&
-        sshpass -p 'Dupa12345' scp -r ../eduplanner-server edutest@ssh.kebson.fun:/srv/
+        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "rm -rf /srv/EduTest/*"
+
+    - name: Transfer repositories to server
+      run: |
+        sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./eduplaner-deploy edutest@ssh.kebson.fun:/srv/ &&
+        sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./eduplanner-server edutest@ssh.kebson.fun:/srv/ &&
+        sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./eduplanner-app edutest@ssh.kebson.fun:/srv/
 
     - name: Deploy application
       run: |
-        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
-        cd /srv/eduplanner-deploy &&
+        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
+        cd /srv/EduTest &&
         docker-compose down &&
-        docker-compose up --build -d
+        docker-compose up -d
         "
