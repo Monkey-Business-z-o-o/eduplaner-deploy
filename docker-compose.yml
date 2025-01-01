@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   database:
     image: postgres:14
@@ -21,7 +23,7 @@ services:
 
   backend:
     build:
-      context: ../eduplanner-server  # Ścieżka z katalogu `eduplaner-deploy` do `eduplanner-server`
+      context: ./eduplanner-server
       dockerfile: Dockerfile
     container_name: eduplanner-backend
     environment:
@@ -35,23 +37,16 @@ services:
       - "8081:8081"
     networks:
       - deploy_network
-    restart: always  # Automatyczny restart w przypadku błędu
 
   frontend:
     build:
-      context: ../eduplanner-app  # Ścieżka z katalogu `eduplaner-deploy` do `eduplanner-app`
+      context: ./eduplanner-app
       dockerfile: Dockerfile
     container_name: eduplanner-frontend
     ports:
       - "3000:3000"
     networks:
       - deploy_network
-    restart: always  # Automatyczny restart w przypadku błędu
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 networks:
   deploy_network:
