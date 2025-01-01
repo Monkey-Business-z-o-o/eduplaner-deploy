@@ -23,7 +23,7 @@ services:
 
   backend:
     build:
-      context: ./eduplanner-server
+      context: ../eduplanner-server
       dockerfile: Dockerfile
     container_name: eduplanner-backend
     environment:
@@ -40,8 +40,10 @@ services:
 
   frontend:
     build:
-      context: ./eduplanner-app
+      context: ../eduplanner-app
       dockerfile: Dockerfile
+    args:
+      OUTPUT_DIR: dist # Dodajemy argument dla Dockerfile
     container_name: eduplanner-frontend
     ports:
       - "3000:3000"
