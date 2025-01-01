@@ -1,0 +1,2 @@
+głiuppota
+nowa głupota 
