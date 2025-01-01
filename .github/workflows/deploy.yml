@@ -52,27 +52,36 @@ jobs:
         chmod 600 ~/.ssh/config
 
     - name: Test SSH connection
+      env:
+        SSHPASS: ${{ secrets.SSH_PASSWORD }}
       run: |
-        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
-
+        sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
 
     - name: Ensure destination directory exists
+      env:
+        SSHPASS: ${{ secrets.SSH_PASSWORD }}
       run: |
-        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "mkdir -p /srv/EduTest"
+        sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "mkdir -p /srv/EduTest"
 
     - name: Cleanup previous deployment
+      env:
+        SSHPASS: ${{ secrets.SSH_PASSWORD }}
       run: |
-        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "rm -rf /srv/EduTest/*"
+        sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "rm -rf /srv/EduTest/*"
 
     - name: Transfer repositories to server
+      env:
+        SSHPASS: ${{ secrets.SSH_PASSWORD }}
       run: |
-        sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./eduplaner-deploy edutest@ssh.kebson.fun:/srv/ &&
-        sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./eduplanner-server edutest@ssh.kebson.fun:/srv/ &&
-        sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./eduplanner-app edutest@ssh.kebson.fun:/srv/
+        sshpass -e scp -r ./eduplaner-deploy edutest@ssh.kebson.fun:/srv/ &&
+        sshpass -e scp -r ./eduplanner-server edutest@ssh.kebson.fun:/srv/ &&
+        sshpass -e scp -r ./eduplanner-app edutest@ssh.kebson.fun:/srv/
 
     - name: Deploy application
+      env:
+        SSHPASS: ${{ secrets.SSH_PASSWORD }}
       run: |
-        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
+        sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
         cd /srv/EduTest &&
         docker-compose down &&
         docker-compose up -d
