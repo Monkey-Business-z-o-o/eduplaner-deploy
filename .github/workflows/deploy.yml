@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Checkout deployment repository
       uses: actions/checkout@v3
+      with:
+        path: eduplaner-deploy
 
     - name: Checkout server repository
       uses: actions/checkout@v3
@@ -20,7 +22,7 @@ jobs:
         repository: Monkey-Business-z-o-o/eduplanner-server
         ref: dev
         token: ${{ secrets.DDToken }}
-        path: eduplanner-server
+        path: eduplaner-deploy/eduplanner-server
 
     - name: Checkout app repository
       uses: actions/checkout@v3
@@ -28,7 +30,7 @@ jobs:
         repository: Monkey-Business-z-o-o/eduplanner-app
         ref: dev
         token: ${{ secrets.DDToken }}
-        path: eduplanner-app
+        path: eduplaner-deploy/eduplanner-app
 
     - name: Install cloudflared
       run: |
@@ -73,16 +75,14 @@ jobs:
       env:
         SSHPASS: ${{ secrets.EDUTEST }}
       run: |
-        sshpass -e scp -r ./eduplaner-deploy edutest@ssh.kebson.fun:/srv/ &&
-        sshpass -e scp -r ./eduplanner-server edutest@ssh.kebson.fun:/srv/ &&
-        sshpass -e scp -r ./eduplanner-app edutest@ssh.kebson.fun:/srv/
+        sshpass -e scp -r ./eduplaner-deploy edutest@ssh.kebson.fun:/srv/EduTest/
 
     - name: Deploy application
       env:
         SSHPASS: ${{ secrets.EDUTEST }}
       run: |
         sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
-        cd /srv/EduTest &&
+        cd /srv/EduTest/eduplaner-deploy &&
         docker-compose down &&
         docker-compose up -d
         "
