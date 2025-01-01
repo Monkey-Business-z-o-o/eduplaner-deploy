@@ -53,7 +53,8 @@ jobs:
 
     - name: Test SSH connection
       run: |
-        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
+        sshpass -p 'Dupa12345' ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "echo Connection successful"
+
 
     - name: Ensure destination directory exists
       run: |
