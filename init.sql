@@ -1,4 +1,5 @@
 -- Ensure the 'root' role exists
+CREATE EXTENSION IF NOT EXISTS dblink;
 DO
 $$
 BEGIN
