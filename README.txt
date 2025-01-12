@@ -7,3 +7,4 @@ bite config
 dockerfile
 SSR w dockerfile
 missed env
+vite-confij.ts lol
