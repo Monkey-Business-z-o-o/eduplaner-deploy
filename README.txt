@@ -5,3 +5,4 @@ deployment niedzielny
 --host"
 bite config 
 dockerfile
+SSR w dockerfile
