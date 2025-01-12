@@ -43,6 +43,7 @@ services:
       context: ./eduplanner-app
       dockerfile: Dockerfile
     container_name: eduplanner-frontend
+    command: npm run preview -- --host
     ports:
       - "3000:3000"
     networks:
