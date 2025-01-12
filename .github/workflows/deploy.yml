@@ -15,6 +15,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         path: eduplaner-deploy
+        clean: true  # Punkt 4: Wymuś czyszczenie lokalnego cache
 
     - name: Checkout server repository
       uses: actions/checkout@v3
@@ -23,6 +24,8 @@ jobs:
         ref: dev
         token: ${{ secrets.DDToken }}
         path: eduplaner-deploy/eduplanner-server
+        clean: true  # Punkt 4: Wymuś czyszczenie lokalnego cache
+        submodules: true  # Punkt 5: Pobierz submoduły
 
     - name: Checkout app repository
       uses: actions/checkout@v3
@@ -31,6 +34,8 @@ jobs:
         ref: dev
         token: ${{ secrets.DDToken }}
         path: eduplaner-deploy/eduplanner-app
+        clean: true  # Punkt 4: Wymuś czyszczenie lokalnego cache
+        submodules: true  # Punkt 5: Pobierz submoduły
 
     - name: Install cloudflared
       run: |
