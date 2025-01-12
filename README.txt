@@ -6,3 +6,4 @@ deployment niedzielny
 bite config 
 dockerfile
 SSR w dockerfile
+missed env
