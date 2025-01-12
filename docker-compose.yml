@@ -23,8 +23,8 @@ services:
 
   backend:
     build:
-      context: ./eduplanner-server
-      dockerfile: Dockerfile
+      context: ./eduplanner-server # Ścieżka do folderu backendu
+      dockerfile: Dockerfile       # Dockerfile dla backendu
     container_name: eduplanner-backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://eduplanner-database:5432/edudb
@@ -34,18 +34,18 @@ services:
       database:
         condition: service_healthy
     ports:
-      - "8081:8081"
+      - "8081:8081"  # Mapowanie portu backendu
     networks:
       - deploy_network
 
   frontend:
     build:
-      context: ./eduplanner-app
-      dockerfile: Dockerfile
+      context: ./eduplanner-app # Ścieżka do folderu frontendu
+      dockerfile: Dockerfile    # Dockerfile dla frontendu
     container_name: eduplanner-frontend
     command: npm run preview -- --host
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Mapowanie portu frontendu
     networks:
       - deploy_network
 
