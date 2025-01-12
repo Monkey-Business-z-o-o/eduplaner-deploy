@@ -82,12 +82,29 @@ jobs:
       run: |
         sshpass -e scp -r ./eduplaner-deploy edutest@ssh.kebson.fun:/srv/EduTest/
 
-    - name: Deploy application
+    - name: Stop and remove old containers and images
       env:
         SSHPASS: ${{ secrets.EDUTEST }}
       run: |
         sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
         cd /srv/EduTest/eduplaner-deploy &&
-        docker-compose down &&
-        docker-compose up -d
+        docker-compose down --rmi all
+        "
+
+    - name: Build and start new containers
+      env:
+        SSHPASS: ${{ secrets.EDUTEST }}
+      run: |
+        sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
+        cd /srv/EduTest/eduplaner-deploy &&
+        docker-compose up --build -d
+        "
+
+    - name: Print image and container information
+      env:
+        SSHPASS: ${{ secrets.EDUTEST }}
+      run: |
+        sshpass -e ssh -o StrictHostKeyChecking=no edutest@ssh.kebson.fun "
+        docker images &&
+        docker ps -a
         "
