@@ -11,4 +11,6 @@ vite-confij.ts lol
 path w vite
 i dupa
 zbita
-IP 
+IP
+
+# testing of internal docker network (backend host not found)
