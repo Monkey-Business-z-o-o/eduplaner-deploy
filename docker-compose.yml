@@ -3,7 +3,20 @@ version: '3.9'
 services:
   database:
     image: postgres:14
-    # ...
+    container_name: eduplanner-database
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root123
+      POSTGRES_DB: edudb
+    ports:
+      - "5432:5432"
+    # DODAJEMY healthcheck
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d edudb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
     networks:
       - dev_network
 
@@ -27,7 +40,6 @@ services:
       context: ./eduplanner-app
       dockerfile: Dockerfile
     environment:
-      # nawet jeśli nazywasz się dev, możesz wstawić np. ENV=dev
       NODE_ENV: production
     networks:
       - dev_network
