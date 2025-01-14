@@ -18,4 +18,5 @@ dupa blada
 pale ass
 who knows?
 reapearence of an env
-redeployment 
+redeployment
+jest zadyma i jest sraka
