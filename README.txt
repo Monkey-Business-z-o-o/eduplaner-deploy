@@ -23,4 +23,5 @@ jest zadyma i jest sraka
 abc
 xyZ
 yyy
+new changes from Michał
 qqq
