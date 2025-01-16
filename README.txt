@@ -24,4 +24,5 @@ abc
 xyZ
 yyy
 new changes from Michał
-qqq
+qqqw
+bezsensowna zmiana na froncie
