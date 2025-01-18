@@ -27,3 +27,4 @@ new changes from Michał
 qqqw
 bezsensowna zmiana na froncie
 łubudubu
+odkrecanie
