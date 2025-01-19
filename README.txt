@@ -28,3 +28,4 @@ qqqw
 bezsensowna zmiana na froncie
 łubudubu
 odkrecanie
+coś z frontendem 
